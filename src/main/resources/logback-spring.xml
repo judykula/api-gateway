@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="false">
+
+    <include resource="my-logback.xml"/>
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="RunLogFile"/>
+        <!--<appender-ref ref="ExceptionLogFile"/>-->
+    </root>
+
+</configuration>
