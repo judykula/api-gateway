@@ -22,7 +22,10 @@ package com.jwy.api.gateway.filter;
  */
 public interface FilterOrderDefinition {
 
+    /**黑名单的优先级 {@link BlackListFilter}*/
+    int ORDER_BLACKLIST = 10;
 
-
+    /**Saas优先级 {@link SaasFilter}*/
+    int ORDER_SAAS = 15;
 
 }

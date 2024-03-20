@@ -59,12 +59,6 @@ public class GwConfiguration {
         return new AppStartedListener();
     }
 
-    @Bean
-    @Primary
-    public TaskExecutor primaryTaskExecutor() {
-        return new ThreadPoolTaskExecutor();
-    }
-
     //json custom
     @Bean
     public Jackson2ObjectMapperBuilderCustomizer jsonCustomizer() {
