@@ -11,7 +11,8 @@
  */
 package com.jwy.api.gateway.client;
 
-import com.jwy.wisp.pojo.dto.saas.TenantHost;
+import com.jwy.medusa.mvc.MyResponse;
+import com.jwy.wisp.pojo.response.saas.TenantHostVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
@@ -34,8 +35,8 @@ import java.util.List;
 @Component
 public class TenantCenterClient {
 
-    private final String Url_Latest_Update_Timestamp = "http://tenant-center/feign/tenant/updatets";
-    private final String Url_Brand_Hosts = "http://tenant-center/feign/hostAndTenant";
+    private final String Url_Latest_Update_Timestamp = "http://tenant-center/feign/site/updateTs";
+    private final String Url_Brand_Hosts = "http://tenant-center/feign/site/hostAndTenants";
 
     @Autowired
     private WebClient.Builder webClientBuilder;
@@ -45,13 +46,13 @@ public class TenantCenterClient {
      *
      * @return
      */
-    public Mono<Long> getLatestUpdateTs() {
+    public Mono<MyResponse<Long>> getLatestUpdateTs() {
         return this.webClientBuilder.build()
                 .get().uri(Url_Latest_Update_Timestamp)
                 .accept(MediaType.ALL)
                 .acceptCharset(StandardCharsets.UTF_8)
                 .retrieve()
-                .bodyToMono(Long.class);
+                .bodyToMono(ParameterizedTypeReference.forType(Long.class));
     }
 
     /**
@@ -60,7 +61,7 @@ public class TenantCenterClient {
      * @return
      * @throws Exception
      */
-    public Mono<List<TenantHost>> getTenantHosts() {
+    public Mono<MyResponse<List<TenantHostVo>>> getTenantHosts() {
 
         return this.webClientBuilder.build()
                 .get().uri(Url_Brand_Hosts)

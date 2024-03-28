@@ -13,7 +13,8 @@ package com.jwy.api.gateway.processor;
 
 import com.google.common.collect.Maps;
 import com.jwy.api.gateway.client.TenantCenterClient;
-import com.jwy.wisp.pojo.dto.saas.TenantHost;
+import com.jwy.medusa.mvc.MyResponse;
+import com.jwy.wisp.pojo.response.saas.TenantHostVo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,8 +66,12 @@ public class SaasProcessor {
     @Scheduled(fixedDelay = 1_000)
     public void refresh() {
 
-        Mono<Long> latestUpdateTs = this.tenantCenterClient.getLatestUpdateTs();
-        latestUpdateTs.doOnSuccess(ts -> {
+        Mono<MyResponse<Long>> resultMono = this.tenantCenterClient.getLatestUpdateTs();
+        resultMono.doOnSuccess(response -> {
+
+            log.info("【SP072】----------------- {}", response);
+
+            long ts = response.getData();
             if(ts - preExecuteTime < 1000){
                 log.warn("【SP061】ignore with latest time: {}", ts);
                 return;
@@ -85,12 +90,13 @@ public class SaasProcessor {
      */
     private Mono<Void> doUpdate(){
 
-        Mono<List<TenantHost>> tenantHosts = tenantCenterClient.getTenantHosts();
-        return tenantHosts.doOnSuccess(resList -> {
+        Mono<MyResponse<List<TenantHostVo>>> resultMono = tenantCenterClient.getTenantHosts();
+        return resultMono.doOnSuccess(response -> {
 
-            if(CollectionUtils.isEmpty(resList)) return;
+            List<TenantHostVo> ths = response.getData();
+            if(CollectionUtils.isEmpty(ths)) return;
 
-            Map<String, String> map = resList.stream().collect(Collectors.toMap(tenantHost -> tenantHost.getHost(), tenantHost -> tenantHost.getTenant()));
+            Map<String, String> map = ths.stream().collect(Collectors.toMap(tenantHost -> tenantHost.getHost(), tenantHost -> tenantHost.getTenant()));
             synchronized (hostAndTenantMap){
                 hostAndTenantMap.clear();
                 hostAndTenantMap.putAll(map);
