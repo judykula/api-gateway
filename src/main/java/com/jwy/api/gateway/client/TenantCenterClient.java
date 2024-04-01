@@ -53,6 +53,7 @@ public class TenantCenterClient {
                 .acceptCharset(StandardCharsets.UTF_8)
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<MyResponse<Long>>() {});
+
     }
 
     /**
@@ -68,8 +69,7 @@ public class TenantCenterClient {
                 .accept(MediaType.ALL)
                 .acceptCharset(StandardCharsets.UTF_8)
                 .retrieve()
-                .bodyToMono(ParameterizedTypeReference.forType(List.class));
-                //.toEntity(ParameterizedTypeReference.forType(List.class));
+                .bodyToMono(new ParameterizedTypeReference<MyResponse<List<TenantHostVo>>>() {});
     }
 
 }

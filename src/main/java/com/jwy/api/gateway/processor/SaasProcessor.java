@@ -69,8 +69,6 @@ public class SaasProcessor {
         Mono<MyResponse<Long>> resultMono = this.tenantCenterClient.getLatestUpdateTs();
         resultMono.doOnSuccess(response -> {
 
-            log.info("【SP072】----------------- {}", response);
-
             long ts = response.getData();
             if(ts - preExecuteTime < 1000){
                 log.warn("【SP061】ignore with latest time: {}", ts);
