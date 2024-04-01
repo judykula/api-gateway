@@ -52,7 +52,7 @@ public class TenantCenterClient {
                 .accept(MediaType.ALL)
                 .acceptCharset(StandardCharsets.UTF_8)
                 .retrieve()
-                .bodyToMono(ParameterizedTypeReference.forType(Long.class));
+                .bodyToMono(new ParameterizedTypeReference<MyResponse<Long>>() {});
     }
 
     /**
