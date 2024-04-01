@@ -35,8 +35,8 @@ import java.util.List;
 @Component
 public class TenantCenterClient {
 
-    private final String Url_Latest_Update_Timestamp = "http://tenant-center/feign/site/updateTs";
-    private final String Url_Brand_Hosts = "http://tenant-center/feign/site/hostAndTenants";
+    private final String Url_Latest_Update_Timestamp = "http://tenantcenter/feign/site/updateTs";
+    private final String Url_Brand_Hosts = "http://tenantcenter/feign/site/hostAndTenants";
 
     @Autowired
     private WebClient.Builder webClientBuilder;
