@@ -71,7 +71,7 @@ public class SaasProcessor {
 
             long ts = response.getData();
             if(ts - preExecuteTime < 1000){
-                log.warn("【SP061】ignore with latest time: {}", ts);
+                //log.warn("【SP061】ignore with latest time: {}", ts);
                 return;
             }
             //如果不行的话，可以试试 filter()-> then()
@@ -100,7 +100,7 @@ public class SaasProcessor {
                 hostAndTenantMap.putAll(map);
             }
             preExecuteTime = System.currentTimeMillis();
-            log.debug("【SP097】preExecuteTime set to: {}", preExecuteTime);
+            log.info("【SP097】preExecuteTime set to: {}", preExecuteTime);
         }).doOnError(throwable -> {
             log.warn("【SP098】getTenantHosts fail", throwable);
         }).then();
