@@ -44,8 +44,10 @@ import java.util.stream.Collectors;
 @ConditionalOnProperty(value = "sys.saas.refresh.enabled", matchIfMissing = true)
 public class SaasProcessor {
 
-    /**上一次执行的时间*/
-    private long preExecuteTime = 0;
+    /**上一次执行成功的时间*/
+    private long preExecuteSuccessTime = 0;
+    /**上一次任务执行失败的时间*/
+    private long preTaskErrorTime = 0;
     /**存储 host-tenant 对应关系*/
     private final Map<String, String> hostAndTenantMap = Maps.newHashMap();
 
@@ -69,18 +71,18 @@ public class SaasProcessor {
         Mono<MyResponse<Long>> resultMono = this.tenantCenterClient.getLatestUpdateTs();
         resultMono.doOnSuccess(response -> {
 
-            log.info("【SP072】============ : {}", response.getData());
-
             long ts = response.getData();
-            if(ts - preExecuteTime < 1000){
+            if(ts - preExecuteSuccessTime < 1000){
                 //log.warn("【SP061】ignore with latest time: {}", ts);
                 return;
             }
             //如果不行的话，可以试试 filter()-> then()
             doUpdate().subscribe();
         }).doOnError(throwable -> {
-            //TODO 添加次数控制
-            log.warn("【SP081】getLatestUpdateTs fail", throwable);
+            if(System.currentTimeMillis() - preTaskErrorTime >= 5000){
+                log.warn("【SP081】getLatestUpdateTs fail", throwable);
+                preTaskErrorTime = System.currentTimeMillis();
+            }
         }).subscribe();
     }
 
@@ -102,8 +104,8 @@ public class SaasProcessor {
                 hostAndTenantMap.clear();
                 hostAndTenantMap.putAll(map);
             }
-            preExecuteTime = System.currentTimeMillis();
-            log.info("【SP097】preExecuteTime set to: {}", preExecuteTime);
+            preExecuteSuccessTime = System.currentTimeMillis();
+            log.info("【SP097】preExecuteTime set to: {}", preExecuteSuccessTime);
         }).doOnError(throwable -> {
             log.warn("【SP098】getTenantHosts fail", throwable);
         }).then();
