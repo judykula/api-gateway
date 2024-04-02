@@ -69,6 +69,8 @@ public class SaasProcessor {
         Mono<MyResponse<Long>> resultMono = this.tenantCenterClient.getLatestUpdateTs();
         resultMono.doOnSuccess(response -> {
 
+            log.info("【SP072】============ : {}", response.getData());
+
             long ts = response.getData();
             if(ts - preExecuteTime < 1000){
                 //log.warn("【SP061】ignore with latest time: {}", ts);
@@ -77,6 +79,7 @@ public class SaasProcessor {
             //如果不行的话，可以试试 filter()-> then()
             doUpdate().subscribe();
         }).doOnError(throwable -> {
+            //TODO 添加次数控制
             log.warn("【SP081】getLatestUpdateTs fail", throwable);
         }).subscribe();
     }
